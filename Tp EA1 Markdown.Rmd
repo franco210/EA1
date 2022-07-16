@@ -1,0 +1,524 @@
+---
+title: "Trabajo practico - ESTADISTICA APLICADA I"
+author: "Franco Gentile - Pablo Zanetti"
+output: pdf_document
+fontsize: 12pt
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+-   **Docente a cargo: Pedro Cosatto**
+
+-   **1º Cuatrimestre 2022**
+
+-   Franco Gentile - PADRÓN : 105226
+
+-   Pablo Zanetti - PADRÓN : 103006
+
+![](New%20folder/Logo-fiuba_big.png){width="18.2cm"}
+
+\newpage
+
+-   **1. Simule 1000 valores de una variable aleatoria normal con los
+    parámetros asignados a su grupo (variable 1) y simule además 1000
+    valores de la variable aleatoria 2 asignada a su grupo. Asuma que
+    estas dos variables simuladas representan a las dos poblaciones que
+    estudia.**
+
+    Para realizar este enunciado hicimos uso de las librerías
+    proporcionadas por el software Rstudio
+
+```{r include=FALSE}
+n<-1000
+set.seed(3423423)
+va1<- rnorm(n,600,25)
+va2<- rgamma(n,6,1/120)
+```
+
+-   **2. Explique cómo tomaría una muestra aleatoria de estas
+    poblaciones en una situación en la que no tuviese acceso a todos los
+    datos digitalizados.**\newline
+
+    Si no tuvieramos acceso a los datos digitalizados, una manera
+    prudente sería utilizar el metodo de *Encuestas por muestreo* la
+    idea principal es definir una población finida de *N* unidades,
+    subpoblaciones de un tamaño fijado de antemano, donde el número de
+    muestras de tamaño *n* viene dado por: \newline
+    $\binom{N}{n}=\frac{N!}{n!*(N-n)!}=C_{N,n}$ \newline Este es un
+    metodo de seleccion de *n* unidades sacadas de *N*, de tal manera
+    que cada una de las muestras tiene la misma probabilidad de ser
+    elegída. \newline Posteriormente, una vez identificada nuestra
+    población, lo que haremos será dividirla en grupos de 6. \newline
+    Tomaremos un dado, lo arrojaremos y el lado que quede boca arriba
+    será el que defina a que grupo tendremos que ir a extraer un dato.
+    Este proceso se repetirá dependiendo de la cantidad de datos que
+    deseemos que tenga cada muestra. Lo ideal será que el tamaño de
+    nuestra población finita sea multiplo de 3, para que el tamaño de
+    cada grupo sea igual.\newline Por ejemplo: si tenemos una población
+    que contiene 12 unidades y queremos extraer muestras de tamaño 3.
+    Primero vemos que podemos tener 220 combinaciones posibles de manera
+    que los datos no se repitan, no le damos importancía al orden de los
+    elementos. Luego separamos a las 12 unidades entre 6, de manera que
+    cada grupo tenga 2 unidades. Posteriormente, arrojaremos el dado 3
+    veces, si sale 1, vamos al grupo 1, donde tendremos dos datos, para
+    elegir el dato buscado, optamos por un sistema de bolillas, en donde
+    cada bolilla representa un dato. Como no hay reposición de los
+    datos, estos no se pueden repetír, de manera que también puede
+    suceder que tengamos que ir a buscar un dato al grupo 1 y no
+    tengamos mas información para sustraer, en estos casos, debemos
+    volver a arrojar el dado.
+
+\newpage
+
+-   **3. Utilizando la aplicación estadística de su preferencia obtenga
+    una muestra de tamaño 50 en cada población y obtenga / calcule:**
+
+```{r include=FALSE}
+va3<- rnorm(50,600,25)
+va4<- rgamma(50,6,1/120)
+set.seed(1000)
+```
+
+-   **3.1. Las principales métricas de tendencia central y de
+    dispersión, así como los coeficientes de asimetría y curtosis.**
+
+    Para este item, decidimos directamente, dejar en evidencía los
+    resultados obtenidos por las metricas de las distribuciones
+    realizadas 50 simulaciones y 1000 simulaciones
+
+    ```{r include=FALSE}
+    #ADICIONAL, calculo desvio
+    sd3<-sqrt(sum((va3-mean(va3))^2)/(length(va3)-1))
+    sd4<-sqrt(sum((va4-mean(va4))^2)/(length(va4)-1))
+    #normal n=1000
+    sk1<-mean(((va1-600)/25)^3) #skewness - momento estandarizado de tercer orden
+    k1<-mean(((va1-600)/25)^4) #kurtosis - vale 3 si la campana es gaussiana
+    #gamma n=1000
+    sk2<-mean(((va2-720)/294)^3) #skewness - momento estandarizado de tercer orden
+    k2<-mean(((va2-720)/294)^4) #kurtosis - vale 3 si la campana es gaussiana
+    #normal n=50
+    sk3<-mean(((va3-mean(va3))/sd3)^3) #skewness - momento estandarizado de tercer orden
+    k3<-mean(((va3-mean(va3))/sd3)^4) #kurtosis - vale 3 si la campana es gaussiana
+    #gamma n=50
+    sk4<-mean(((va4-mean(va4))/sd4)^3) #skewness - momento estandarizado de tercer orden
+    k4<-mean(((va4-mean(va4))/sd4)^4) #kurtosis - vale 3 si la campana es gaussiana
+    R1=c(sk1,sk3)
+    R11=c(k1,k3)
+    R2=c(sk2,sk4)
+    R22=c(k2,k4)
+
+    ```
+
+    Comparacion normal con 50 ensayos y normal con 1000 ensayos,
+    respectivamente
+
+    Coeficiente de asimetría $(Skewness)$
+
+    ```{r echo=FALSE}
+    R1
+    ```
+
+    Coeficiente de curtosis $(\alpha_{4})$
+
+    ```{r echo=FALSE}
+    R11
+    ```
+
+    Comparacion gamma con 50 ensayos y gamma con 1000 ensayos,
+    respectivamente
+
+    Coeficiente de asimetría $(Skewness)$
+
+    ```{r echo=FALSE}
+    R2
+    ```
+
+    -   Coeficiente de curtosis $(\alpha_{4})$
+
+    ```{r echo=FALSE}
+    R22
+    ```
+
+-   **3.2. El histograma de densidad de frecuencias**
+
+    ```{r echo=FALSE}
+
+    par(mfrow=c(1,2))
+    hist(va3, freq = FALSE, col='lightblue',
+           main='Normal 50 ensayos', xlab='',breaks=10)
+    hist(va4, freq = FALSE, col='lightblue',
+         main='Gamma 50 ensayos', xlab='',breaks=10)
+    ```
+
+-   **3.3. El box plot, identifique los outliers**
+
+    ![](New%20folder/boxplot.PNG)
+
+    Se puede observar que para cada simulación obtuvimos un outlier, son
+    los puntos blancos situados aproximadamente a 670 y 1300
+    respectivamente.
+
+-   **3.4. Explique en una situación real cómo trataría a los outliers.
+    En una situación real, primero buscaría la manera de encontrar los
+    outliers, y esto podría realizarse con el método del boxplot, para
+    así poder reconocer con mayor facilidad los valores
+    atípicos.**\newline Una vez reconocidos estos valores, intentaríamos
+    analizarlos y categorizarlos para así luego poder tomar una decisión
+    a partir de la evaluación del riesgo a los que estos someten a
+    nuestro estudio.\newline Consideramos que estos casos atípicos se
+    pueden clasificar en algunas categorías, como por ejemplo aquellos
+    que surgen de un error de procedimiento, que pueden ser eliminados
+    del análisis. También se deben tener en cuenta aquellas
+    observaciones que ocurren como consecuencia de algún acontecimiento
+    extraordinario, donde se optará por reconocer que no representa
+    ningún riesgo y también puede ser eliminado. Cuando se trate de un
+    valor cuyo origen no es el de un error de procedimiento o de un caso
+    atípico, se debería analizar aún más en profundidad la influencia
+    del mismo. Una manera de hacerlo es quitarlo del análisis,
+    rehacerlo, y observar cómo se desarrolla luego el análisis. Si este
+    supone un cambio drástico, se deberá tener en cuenta y trabajar
+    sobre ese mismo para poder solucionarlo, pero si el cambio no es
+    notable (por ejemplo, el p-valor sigue siendo significativo),
+    podremos quitarlo con las observaciones y justificaciones
+    adecuadas.\newline Otra forma de tratar los outliers sería una
+    transformación que minimice el efecto distorsionador, como por
+    ejemplo una transformación logarítmica o una raíz cuadrada que
+    reduzca la distancia entre las observaciones. Otra alternativa sería
+    la de elegir un modelo estadístico con supuestos diferentes.\newpage
+
+-   **3.5. Obtenga el Q-Q plot de los datos contra una distribución
+    normal.**
+
+    ```{r echo=FALSE}
+    par(mfrow=c(1,2))
+    qqnorm(va3,main='Q-Q Plot Normal 50')
+    qqline(va3,col='darkred')
+    qqnorm(va4,main='Q-Q Plot Gamma 50')
+    qqline(va4,col='darkgreen')
+    ```
+
+    \newpage
+
+-   **3.6. Repita el punto anterior, pero eliminando los outliers.**
+
+    ```{r echo=FALSE}
+    #calculo cuantiles
+    cuantil.muestral<-function(x,omega){
+      W<-1
+      i<-1
+      x<-sort(x)
+      while(W==1){
+        if(i/(length(x)+1)>omega){
+          W<-0} else {i<-i+1}
+      }
+      return(mean(c(x[i],x[i-1])))
+    }
+    #calculo limites
+    RIC_3<-cuantil.muestral(va3,0.75)-cuantil.muestral(va3,0.25)
+    x2_3<-cuantil.muestral(va3,0.75) + 1.5*RIC_3
+    x1_3<-cuantil.muestral(va3,0.25) - 1.5*RIC_3
+    RIC_4<-cuantil.muestral(va4,0.75)-cuantil.muestral(va4,0.25)
+    x2_4<-cuantil.muestral(va4,0.75) + 1.5*RIC_4
+    x1_4<-cuantil.muestral(va4,0.25) - 1.5*RIC_4
+    #Eliminamos outliers en va3
+    vaN3<-c()
+    for (i in va3){
+      if (i>=x1_3 & i<=x2_3){
+        vaN3<-c(vaN3,i)
+      }
+    }
+
+    #Eliminamos outliers en va4
+    vaN4<-c()
+    for (i in va4){
+      if (i>=x1_4 & i<=x2_4){
+        vaN4<-c(vaN4,i)
+      }
+    }
+
+
+    par(mfrow=c(1,2))
+    qqnorm(vaN3,main='Q-Q Plot Normal 50 sin outliers')
+    qqline(vaN3,col='darkred')
+    qqnorm(vaN4,main='Q-Q Plot Gamma 50 sin outliers')
+    qqline(vaN4,col='darkgreen')
+    ```
+
+-   **3.7. A partir de todas las técnicas gráficas y las métricas
+    calculadas verifique la consistencia entre las distribuciones de las
+    poblaciones que se le asignaron y las conclusiones que podrían
+    extraerse a partir de las técnicas de estadística descriptiva
+    aplicadas a estos datos.**
+
+Iniciamos calculando el sesgo de las variables para así luego
+compararlas por medio de la siguiente fórmula correspondiente al momento
+estandarizado de tercer orden:
+
+$\alpha_{3} = E(x-\mu)^{3} / (Var(x))^{3/2}$ En cuanto a las variables
+normales, el valor de $\alpha_{3}$ , por definición, debería tender a
+cero y ser simétrica, es decir, no tener ningún tipo de asimetría.
+Podemos observar en en la simulación correspondiente a las 1000 muestras
+que el valor de $\alpha_{3}$ es aproximadamente **-0.14**, y el de las
+50 muestras es de **0.16**, lo cual tiene sentido dado que estamos
+pasando de trabajar con 1000 muestras a 50, por ende concluimos que a
+medida que aumentamos la cantidad de repeticiones de la variable normal,
+$\alpha_{3}$ tiende a ser cada vez más parecido a 0 y no toma asimetría
+de ningún tipo.\newline La distribución de las variables Gamma tiene
+asimetría positiva, donde el parámetro $\alpha$ es el que le da la forma
+y a medida que aumenta atenúa aún más la asimetría mencionada, por ende,
+el momento estandarizado de tercer orden va a ser mayor a cero. Al
+realizar las simulaciones, obtuvimos que $\alpha_{3}$ es **1.07** en el
+caso de las 1000 muestras, y 3 para las 50 el resultado fue de **0.77**,
+por lo que concluímos que a medida que aumentemos las repeticiones, se
+atenuará más la asimetría positiva de la distribución de la variable.
+
+Tras haber hecho el análisis correspondiente al sesgo, analizamos el
+caso de la curtosis, donde nuestro coeficiente será $\alpha_{4}$ , es
+decir, el momento centrado adimensional de cuarto 4 orden:
+
+$\alpha_{4} = E(x-\mu)^{4} / (Var(x))^{2}$
+
+Entonces $\alpha_{4}$ es una medida del grado de apuntamiento de la
+función de densidad, por ende se 4 considera que si este es mayor a 3 la
+campana sería leptocúrtica, mientras que si es menor a 3, sería
+platicúrtica. Iniciamos comparando las dos poblaciones normales y en
+ambos casos notamos que el valor de $\alpha_{4}$ fue siempre mayor a 3 y
+aumentó cuando tomamos las 50 muestras, por lo que 4 consideramos que si
+aumentamos el número de repeticiones, cada vez nos acercaremos más a una
+campana más aplanada.
+
+Al comparar las dos poblaciones de la gamma, observamos que sucedió lo
+contrario: cuando pasamos de 1000 muestras a 50 el valor de $\alpha_{4}$
+disminuyó considerablemente, por 4 ende concluímos que a medida que
+aumentemos las repeticiones, se notará cada vez más la campana
+leptocúrtica.
+
+\newpage
+
+-   **4. A partir de los datos de la población 1, tome 100 muestras
+    aleatorias diferentes de tamaño 5. Para cada muestra calcule:**
+
+    A traves de el software utilizado, mediante la función sample, que
+    se encarga de tomar datos aleatoriamente de listas, lo que hicimos
+    fue encargarle que tome 5 valores proporcionados por las
+    distribucion normal que generamos en un principio, y esos valores,
+    que conformarían los datos de una muestra, los guardamos en una
+    matriz, cuyos datos los hicimos visibles en un excel.
+
+    En la imagen también se ven los datos que recibimos para resolver el
+    ítem 5.
+
+    ![Datos almacenados en excel](New%20folder/Pic1.jpg)
+
+-   **4.1. El intervalo de confianza del 95% para la media poblacional
+    asumiendo que conoce la varianza. Calcule empíricamente el nivel de
+    confianza.**
+
+    Nosotros recibimos valores tales que conformamos 100 muestras, a
+    continuación mostramos los resultados obtenidos en solo 20 de ellas.
+
+    Datos obtenidos a partir de 1000 simulaciones de la distribución
+    normal, 5 datos : 1 muestra
+
+    ![20 muestras aleatorias de tamaño 5](N5.PNG)
+
+    Comparamos
+
+    Calculo empirico del intervalo de confianza para varianza conocida
+
+    ```{r echo=FALSE}
+    #desvio conocido normal = 25
+    alfa=0.05
+    LScn<- qnorm(1-alfa/2)*25/sqrt(n)+mean(va3)
+    LIcn<- -qnorm(1-alfa/2)*25/sqrt(n)+mean(va3)
+    ICcn=c(LIcn,LScn)
+    ICcn
+    ```
+
+-   **4.2. El intervalo de confianza del 95% para la media poblacional
+    asumiendo que se desconoce la varianza. Calcule empíricamente el
+    nivel de confianza y la longitud promedio de los intervalos y su
+    error relativo promedio.**
+
+    Los datos obtenidos sobre las muestras pueden visualizarse en la
+    Figura
+
+    Calculo empirico del intervalo de confianza para varianza
+    desconocida
+
+    ```{r echo=FALSE}
+    #desvio desconocido normal
+    sd3<-sqrt(sum((va3-mean(va3))^2)/(length(va3)-1))
+    LSdn<- qt(1-alfa/2,5)*sd3/sqrt(n)+mean(va3)
+    LIdn<- -qt(1-alfa/2,5)*sd3/sqrt(n)+mean(va3)
+    ICdn=c(LIdn,LSdn)
+    ICdn
+    ```
+
+    Calculo empirico del error relativo
+
+    ```{r echo=FALSE}
+    qt(1-alfa/2,5)*sd3/sqrt(n)
+    ```
+
+    \newpage
+
+-   **4.3. Compare los resultados obtenidos en 4.1 y 4.2**
+
+    Se puede observar que el Error para el caso de el desvio conocido y
+    el Error relativo para el caso de la varianza desconocida es mucho
+    mayor al Error obtenido en el caso empirico, esto es debído a que el
+    tamaño de nuestras muestras es muy pequeño, por lo tanto el sesgo es
+    muy grande.
+
+    También vemos que el desvío es mucho mayor al empirico, el motivo es
+    el mismo que mencionamos anteriormente
+
+    \newpage
+
+-   **5. A partir de los datos de la población 1, tome 100 muestras
+    aleatorias diferentes de**
+
+**tamaño 30. Para cada muestra repita los cálculos y análisis efectuados
+en los**
+
+**puntos 4.1, 4.2 y 4.3.**
+
+Datos obtenidos a partir de 1000 simulaciones de la distribución normal,
+30 datos : 1 muestra
+
+![a partir de 1000 simulaciones deDatos de 20 muestras aleatorias de
+tamaño 30](N30.PNG)
+
+Recordando que
+
+Calculo empirico del intervalo de confianza para varianza conocida
+
+```{r echo=FALSE}
+#desvio conocido normal = 25
+alfa=0.05
+LScn<- qnorm(1-alfa/2)*25/sqrt(n)+mean(va3)
+LIcn<- -qnorm(1-alfa/2)*25/sqrt(n)+mean(va3)
+ICcn=c(LIcn,LScn)
+ICcn
+```
+
+Calculo empirico del intervalo de confianza para varianza desconocida
+
+```{r echo=FALSE}
+#desvio desconocido normal
+sd3<-sqrt(sum((va3-mean(va3))^2)/(length(va3)-1))
+LSdn<- qt(1-alfa/2,5)*sd3/sqrt(n)+mean(va3)
+LIdn<- -qt(1-alfa/2,5)*sd3/sqrt(n)+mean(va3)
+ICdn=c(LIdn,LSdn)
+ICdn
+```
+
+Calculo empirico del error relativo
+
+```{r echo=FALSE}
+qt(1-alfa/2,5)*sd3/sqrt(n)
+```
+
+\newpage
+
+-   **6. A partir de los análisis efectuados en 4.3 y 4.4 ¿Qué puede
+    concluir?**
+
+Puedo concluir que el Error relativo disminuyo considerablemente, y el
+desvío esta mas acentuado en torno a los mismos valore, esto es debído a
+que aumentamos la cantídad de ensayos.
+
+Por lo tanto la aproximación realizada, en donde 30 datos conforman una
+muestra, es mucho mas precisa, que la utilizada anteriormente
+
+\newpage
+
+-   **7. Repita los puntos 4 y 5 pero ahora para la media de la
+    variable 2. Indique qué**
+
+**supuestos teóricos está violando. Compare los niveles de confianza
+empíricos.**
+
+El error teórico lo realizamos al momento de calcular el intervalo de
+confianza, lo estamos haciendo de la misma manera que lo hicimos al
+calcularlo para la distribución normal.
+
+El supuesto teorico que estamos violando es que para realizar una buena
+aproximación normal $\alpha$ debería ser \>25 y en nuestro caso
+$\alpha=6$ por lo que realizar lo dicho anteriormente es sumamente
+peligroso, a continuación, veremos la consecuencia de hacerlo.
+
+Para comenzar, volvimos a generar datos utilizando la función sample,
+pero esta vez haciendo uso de la distribución gamma, que generamos al
+principio, que cuenta con 1000 simulaciones.
+
+![Datos almacenados en excel](New%20folder/Pic2.jpg)
+
+Nosotros recibimos valores tales que conformamos 100 muestras, a
+continuación mostramos los resultados obtenidos en solo 20 de ellas.
+
+Datos obtenidos a partir de 1000 simulaciones de la distribución gamma,
+5 datos : 1 muestra
+
+![20 muestras aleatorias de tamaño 5](G5..PNG)
+
+\newpage Datos obtenidos a partir de 1000 simulaciones de la
+distribución gamma, 30 datos : 1 muestra
+
+![20 muestras aleatorias de tamaño 30](G30.PNG)
+
+Calculo empirico del intervalo de confianza para varianza conocida
+
+```{r echo=FALSE}
+#desvio conocido gamma = 294
+LScg<- qnorm(1-alfa/2)*294/sqrt(n)+mean(va4)
+LIcg<- -qnorm(1-alfa/2)*294/sqrt(n)+mean(va4)
+ICcg=c(LIcg,LScg)
+ICcg
+```
+
+Calculo empirico del intervalo de confianza para varianza desconocida
+
+```{r echo=FALSE}
+sd4<-sqrt(sum((va4-mean(va4))^2)/(length(va4)-1))
+LSdg<- qt(1-alfa/2,5)*sd4/sqrt(n)+mean(va4)
+LIdg<- -(qt(1-alfa/2,5))*sd4/sqrt(n)+mean(va4)
+ICdg=c(LIdg,LSdg)
+ICdg
+```
+
+1.  Calculo empirico del error relativo
+
+```{r echo=FALSE}
+qt(1-alfa/2,5)*sd4/sqrt(n)
+```
+
+Se puede ver que tenemos un desvío muy grande, por lo tanto esta
+aproximación no es buena, esto mejora un poco al aumentar la cantidad a
+30 datos en una muestra, en donde el Error, con desvío conocido, se
+reduce de 257 a 8.
+
+También visualizamos que los datos se acentúan, al igual que lo sucedido
+en el ensayo con la distribución normal, marcan una tendencía y los
+intervalos de confianza se acercan a los valores calculados
+empiricamente.
+
+\newpage
+
+-   **8. A partir de los análisis efectuados elabore sus conclusiones
+    generales.**
+
+Concluyo que para hacer una buena aproximación de la distribución normal
+no necesitamos tener un tamaño de muestra tan grande, como si lo vamos a
+necesitar para realizar una aproximación de una distribución gamma.
+
+A partir de los análisis efectuados también concluimos que cuanto mayor
+sea la cantidad de datos que tengamos en nuestra muestra mejor va a ser
+la aproximación.
+
+Si queremos realizar una buena aproximación a partir de una distribución
+gamma, debemos tener especial cuidado en el valor de sus parametros, por
+que estaremos rompiendo un supuesto teoríco al realizar el calculo de su
+intervalo de confianza.
