@@ -1,1 +1,1 @@
-#Trabajo Practico realizado en la materia Estadistica Aplicada I
+Trabajo Práctico realizado en la materia Estadistica Aplicada I
